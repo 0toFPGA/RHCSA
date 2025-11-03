@@ -27,3 +27,55 @@ STDERR -> 2>  2
 2>&1 = Redirects STDERR to the same destination as STDOUT. Notice that this has to be used in combination with normal combination with normal output redirection.
 
 < = Redirects STDIN
+
+editing with VIM
+
+a nice to know is how to use vim*
+
+2 modes command mode and input mode-
+command mode= you can just enter a command and you cannot edit the contents of the file.
+input mode= where you can edit/change the contents of the file.
+
+appears that there is a lot of commands when working with vim...
+    **TIP- try to work with as few commands as you can to start when working with vim, start small and work your way up!
+        Might try vimtutor- it is a tutorial that walks you through how to use vim easliy?
+
+Esc= switchs from input mode to command mode. press it before typing any command
+i, a= switches to input mode at (i) or after(a) current cursor position.
+o= opens a new line below your position and goes into input mode.
+:wq= Writes and quits the file
+:q!= Quits the file without applying any changes. the ! forces the command to do its work, add the ! only if you really know what you are doing.
+:w filename= Writes the current filename with a new filename
+dd= deletes the current line and places the contents of the deleted line into memory
+yy= copies the current line
+p= pastes the contents that have been cut or copied into memory
+v= enters visual mode, which allows you to select a block of text using the arrow keys. Use d to cut the selection or y to copy it.
+u= undoes the last command. can use as much as needed.
+Ctrl+ r= Redoes the last undo. (can only be repeated once)
+gg= Goes to the first line in the document
+G= goes to the last line in the document.
+/text= searches for text from the current position forward
+?text= searches for text from the current position backwards
+^= goes to the first postition in the current line
+$= goes to the last position in the current line
+!ls= adds the output of ls (or any other command) in the current file
+:%s/old/new/g= replacs all occurances of old with new *and that is global because of the g at the end*
+
+
+Shell ENV-
+
+Variables are fixed names that can be assigned dynamic values.
+    the example- $LANG, which is set on my machine to en_US.UTF-8
+        I am curious why it is that- 
+        NOT RELEVENT
+        [
+        en= english (makes sense)
+        US= US territory
+        UTF.8= Unicode Transformation Format- 8-bit: This is the character encoding that determines how characters are stored as binary data.
+            it is backwards compatible with with ASCII, using  a single byte for ASCII characters and one to four bytes for other characters, which allows it to handle a vast ranfe of languages, symbols and emojis.
+            1-byte: Characters from U + 0000 to U + 007F use one byte, structured as 0xxxxxxx
+            2-byte: Characters from U + 0080 to U + 07FF use 2 bytes, structured as 110xxxxx 10xxxxxx
+            3-byte: Characters from U + 0800 to U + FFFF use 3 bytes, structured as 1110xxxx 10xxxxxx 10xxxxxx
+            4-byte: Characters from U + 10000 to U +1FFFFF use 4 bytes, structured as 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+            **this was a little side quest that I thought was cool, I hope that it comes up at a later date!
+            ]
