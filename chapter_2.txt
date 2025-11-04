@@ -79,3 +79,39 @@ Variables are fixed names that can be assigned dynamic values.
             4-byte: Characters from U + 10000 to U +1FFFFF use 4 bytes, structured as 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
             **this was a little side quest that I thought was cool, I hope that it comes up at a later date!
             ]
+
+ENV config files:
+/etc/profile= a generic file that is processed by all users upon login
+/etc/bashrc= this file is processed when subshells are started.
+.bash_profile= user specific login shell variables can be defined
+.bashrc= user specific file where subsystem variables can be defined.
+    They make a note between these files, there is a login shell and a subshell.
+    The login shell- is the first shell that is opened for a user after the user logged in
+        here the user can run scripts which will start a subshellof that login shell.
+
+HELP ***SUPER USEFUL!!***
+There are way too many commands in linux and it is severly overwhelming to try and even scratch the surface trying to memorize them all.
+    use the man command - it is a phenomenal resource for getting help about command syntax and usage!
+    you can also use command --help
+        simple as " <command> --help"
+            Nearly all commands provide a short overview of help when you use the option --help, it is Nearly not all because some find it erroneous...
+            Thankfully they will display an ERROR message and then will display the valid options with the command.
+
+*** MAKE YOUR MANDB IS UP TO DATE!! run command sudo mandb to check
+Searching the mandb database by using apropos or man -k followed by the keyword that you want to search for.
+    apropos is the same as man -k
+
+Man pages are catagorized into different sections. The most relevent sections for system admins are as follows:
+1: Executable programs or shell commands    ---
+5: File formats and conventions                |-- KEY TOPICS
+8: System administration commands           ---  
+
+You can lower the results that are shown by using the grep command to show the sections that are only relevent to what you need.
+    if you are looking for a a config file that has something to do with passwords you would use something like the following:
+        man -k password | grep 5
+    if you are looking the command that an admin would use to create partitions you would use the following:
+        man -k partitions | grep 8
+
+mentioned very late in the book but /usr/share/doc is a great source to find information like the following:
+    rsyslog,bind, Kerberos, and OpenSSL
+
