@@ -1,0 +1,11 @@
+File Hierarchy system breakdown
+
+/ = root directory
+/boot = Contains all files needed to boot linux
+/dev = Contains device files that are used for accessing physical devices, essential during boot
+/etc = contains configuration files used by programs and services
+/home = used for local user home directories
+/media,/mnt = used for mounting devices in the file system tree
+/opt = used for optional packages
+/proc = used by the proc file system... this gives access to kernel information
+/root = 
