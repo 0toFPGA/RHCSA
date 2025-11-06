@@ -8,4 +8,34 @@ File Hierarchy system breakdown
 /media,/mnt = used for mounting devices in the file system tree
 /opt = used for optional packages
 /proc = used by the proc file system... this gives access to kernel information
-/root = 
+/root = the home directory of the root user
+/run = May be used for data by services like NFS, FTP, HTTP
+/sys = Used as an interface to different hardware devices that are managed by the Kernel and associated processes
+/tmp = contains temporary files that may be deleted without any warning during boot
+/usr = Contains subdirectories with program files, libraries for these program files, and documentation about them
+/var = Contains files that may change in size dynamically, such as log files, mail boxes and spool files
+
+a mount = is a connection between a device and a directory
+The linux file system is presented as one hierarchy with the root directory (/) being the starting point
+    This can be distibuted over different devices and even computer systems that are mounted into the root directory
+
+Mounting devices makes it possible to organize the LFS in a flexible way.
+    There are several disadvantages to storing all the files in just one file system, which gives several good reasons to work with multiple mounts
+        1/ High activity in one area may fill up the entire file system, which will negatively impact services running on the server
+        2/ If all files are on the same device, it is difficult to secure access and distinguish between different areas of the file system.
+            Good practice seems to be mounting on a seperate file system and adding mount options to meet specific security needs.
+        3/ If a one-device file system is completely filled, it may be difficult to make additional storage space avialable
+
+Learn how to avoid the pitfalls by organizing LFS in different devices (and even shares on other computers), such as disk partitions and logical volumes, and mount these devices into the FSH.
+    Configuring a device with a dedicated mount, you are able to use dpecific mount options that can restrict the access to the device.
+        /boot = often mounted on another device because it requires extra information your computer needs during boot
+                    linux cannot boot by default, kernel and associated files need to be stored seperatly on a /boot device
+        /boot/EFI = if a system uses Exensible Firmware interface (EFI) a mount is required to give access to files at the earliest stages of boot procedure
+        /var = typically on a dedicated device because it grows in a dynamic and uncontrolled way.
+                    It is just to make sure the device does not get filled up.
+        /home = on a dedicated device for security reasons. On a dedicated device you can mount it with specific options such as "noexec and nodev"
+                    noexec = a mount option in Linux that prevents the execution of any binaries from the specified filesystem or directory
+                    nodev = a mount option that prevents the interpretation of character or block special devices on a mounted filesystem
+        /usr = contains operating file system files only, normal users do not need write access to this.
+    OTHER servers can have different security measures that have other directories that are mounted on dedicated partitions or volumes.
+
