@@ -39,3 +39,32 @@ Learn how to avoid the pitfalls by organizing LFS in different devices (and even
         /usr = contains operating file system files only, normal users do not need write access to this.
     OTHER servers can have different security measures that have other directories that are mounted on dedicated partitions or volumes.
 
+mount and df commands
+mount= is a dump of a lot of infromation that gives an overview of all mounted devices
+df -Th = shows the mounted disks by using flags (-T= filesystem type and -h = summarizes it in a human readable way)
+    df -Th is shown in 7 columns
+        filesystem: The name of the device that interacts with the disk device that is used. The real devices in the output start with /dev
+            There are also tmpfs, these are kernel devices that are used to create a temporary file system on RAM
+        type: the type of filesystem used
+        size: the size of the file used
+        used: the amount of disk space the device has used
+        avial: The amount of unused disk space
+        Use%: the % of the device that is currently in use
+        Mounted on: the dir the device is currently mounted on.
+
+Managing files
+need to comfortable with the following
+Working with wildcards
+Managing and working with directories
+working with absolute and relative pathnames
+listing file and directories
+copying files and directories
+moving files and directories
+deleting files and directories
+
+KEY TOPIC
+    * = Refers to an unlimited number of characters. ls *, for instance, shows all files in the current dir (except those files that begin with a dot(.))
+    ? = Used to refer to one specific character that can be any character. ls c?t would match cat as well as cut
+    [auo] = Refers to one character that may be selected from the range that is specified between the square brackets. ls c[auo]t could match cat, cut, and cot.
+
+directories are also referred to as folders.
