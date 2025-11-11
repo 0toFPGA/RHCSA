@@ -68,3 +68,19 @@ KEY TOPIC
     [auo] = Refers to one character that may be selected from the range that is specified between the square brackets. ls c[auo]t could match cat, cut, and cot.
 
 directories are also referred to as folders.
+
+KEY TOPIC
+    absolute filename (or absolute pathname)= is a complete pathe reference to a file or directory you want to work with. this pathname starts with the root directory, followed by the subdirectories leading up to the actual filename.
+        No matter your current directory absolute filenames will always work.
+            EXAMPLE: /home/tommy/shell_script.log
+
+    relative filename = is a relative to the current directory shown with the pwd command. It contains only the elements that are required to get from the current directory up to the item you need.'
+        if you current directory is /home (shown by pwd). When you refer to the relative filename tommy/shell_script.log you are referring to the absolute filename /home/tommy/shell_script.log
+        When working with relative filenames it is sometimes helpful to move up a level.
+            EXAMPLE: You want to copy the file /home/tommy/shell_script.log to /home/tommy. A few solutions would work.
+            1. cp /home/tommy/shell_script.log /home/tommy. this command uses absolute pathnames this will always work.
+            2. (make sure your current directory is /home) cp tommy/shell_script.log tommy. you are using relative filenames here and that is why there is not a leading /. There is a risk if the directory tommy does not exist it will
+                will create a file tommy. Use cp tommy/shell_script.log tommy/ to ensure that if the directory doesn't exist it will generate an error message.
+            3. If the current directory is /home/tommy you can also use cp shell_script.log ../tommy
+                what this command does is it copies the file up a level (you would be in the /home directory and from there it will look for the /tommy directory.)
+
