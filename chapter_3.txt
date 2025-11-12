@@ -84,3 +84,18 @@ KEY TOPIC
             3. If the current directory is /home/tommy you can also use cp shell_script.log ../tommy
                 what this command does is it copies the file up a level (you would be in the /home directory and from there it will look for the /tommy directory.)
 
+The copy command is a super useful command, simple as cp </path_to_file> </path_to_destination> EXAMPLE= cp /etc/hosts /tmp
+    TIP- If you copy a file to a directory but the dir does not exist a file will be created with the name of the alleged target dir. so it is best practice to add a / after the target dir like so.
+        cp /etc/hosts /tmp/ not cp /etc/hosts /tmp
+you can copy whole directories and all the files by using the -R (recursive) flag [ cp -R /etc /tmp/]
+one thing we should consider with the cp command is permissions and other properties that the files might have. Without extra options you risk these properties not being copied.
+    -a = keep current permissions
+    cp /somedir/.* /tmp = will copy all files that have a name starting with a dot (the hidden files) to /tmp
+    cp -a /somedir/ . = this will copy everything and preserve permissions to the current directory.
+    cp -a /somedir/. . = (notice the space in between the periods) this will cp all regular and hiden files to the current dir.
+
+mv is very similar to cp except the file or directory will no longer be in the original directory
+    mv <file> </location> EXAMPLE= mv file /tmp/
+    mkdir somefiles; mv somefiles /tmp/ = first it will create a directory with the name somefiles and then moves the dir to /tmp. Also would work if the dir had files in it.
+    mv myfile mynewfile = it just renames the file
+
