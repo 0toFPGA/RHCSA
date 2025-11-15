@@ -1,0 +1,13 @@
+Chapter 4 notes:
+KEY TOPIC:
+    less → opens a text file pager
+    cat → dumps contents of the text file onto screen
+    head → shows the top of the file
+    tail → shows the bottom of the file
+    cut → used to filter specific columns or characters from a text file
+    sort → sorts contents
+    wc → counts # of lines, words, and characters long.
+
+for short files use cat, it just dumps the content onto your screen.
+    Example: cat /etc/passwd
+        cat dumps file in order so you can reverse cat to tac to get the top of the file at the bottom on your screen.
