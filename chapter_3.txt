@@ -99,3 +99,87 @@ mv is very similar to cp except the file or directory will no longer be in the o
     mkdir somefiles; mv somefiles /tmp/ = first it will create a directory with the name somefiles and then moves the dir to /tmp. Also would work if the dir had files in it.
     mv myfile mynewfile = it just renames the file
 
+rm is a super powerful command. this is what we will use to delete files.
+    can be used on single files and also directories (for directories we will use the rm -r which is recursive)
+        A LOT of commands use the -R option but some use -r they both typically mean recursive, it is a little confusing.
+        another note is if you run rm as root it will ask for confirmation, the reason is that through /root/.bashrc, rm is defined as an alias to rm -i. 
+            if you do not like that you can use the -f option to remoce the alias. Know what you are doing because it will NEVER warn you again.
+
+KEY TOPIC:
+Innodes = this is where linux stores admin data about files.
+    in this innode is the following 
+        1. The data block where the file contents are stored
+        2. The creation, access, and modification date.
+        3. permissions
+        4. File owners
+    one piece of information that is not stored in the inode: the name of the file. Names are stored in the directory, and each filename knows which inode it has to address to access further file information.
+    the inode does not know which name it has; it jsut know how many names are associated with the inode. these names are reffered to as HARD LINKS. So every file always has one hard link to start with, which is the name of the file.
+        you create a file and you give it a name. This name is a hard link. On linuxfs multiple hard links can be created to a file. This is useful if a file has to be in multiple locations , and you need an easy solution to keep all the contents the same.
+            if a change is applied to any of the hard links, it will show in all other hard links as well, as all hard links point to the same data blocks. Some restrictions apply to hard links though.
+                1. Hard links must exist all on the same device (partition, logical volume, etc...)
+                2. You cannot create hard links to directories
+                3. When the last name (hard link) to a file is removed, access to the files's data is also removed
+
+Symbolic links(also referred to as a soft link)= does not link directly to the inode but to the name of the file. This makes symlinks much more flexible, but it has some disadvantages.
+    Advantages:
+        1. Can link to other files on other devices, as well as other directories.
+    disadvantages:
+        1. when the original file is deleted the symlink becomes invalid and does not work any longer.
+
+Lets see if I can recreate this diagram
+                    symlink
+                        ↓
+        Hardlink     Hardlink
+            ↓           ↓
+        --------------------
+        |                  |
+        |       Inode      |
+        |                  |
+        --------------------
+        ↓                  ↓
+             Data Blocks
+
+Use the ln command to create links. uses same order as cp and mv; ln <source_name> <destination_name> and if you want to create a symlink add a -s (ln -s /etc/hosts .)
+    on rule with creating hard links, you must be the owner of the item that you want to link to.
+        KEY TOPIC:
+            1. ln /etc/hosts . → creates a link to the file /etc/hosts in the current directory
+            2. ln -s /etc/hosts . → creates a symlink to the file /etc/hosts in the current dir.
+            3. ln -s /home /tmp → creates a symlink to the directory /home in the dir /tmp.
+        ls will reveal whether a file is a link.
+Something that is kinda glossed over right now anyways is the fact of link counters
+    what they are → they are the hard link count, which shows how many files are pointing to the same underlying data(inode).
+        this is the number that is right after the permissions line. not overyly important but worth noting.
+
+Archives and compressed files
+    to create an archive of files on linux, you will often use tar command.
+        Tape ARchiver(tar) → used to archive files. Must be able to do the following on the RHCSA test.
+            1. Create an archive (tar cvf <archive_name>.tar /<files_you_want_to archive>)
+                1a. -c = create
+                1b. -v = verbose
+                1c. -f = filename
+            2. List the contents of an archive (tar tvf /root/<archive_name>.tar)
+                2a. -t = display/lists contents of archive.
+            3. Extract an archive (tar xvf <archive_name>.tar /path_to_destination)
+                3a. -x = extracts
+            4. Compress and uncompress Archives (tar cvzf <archive_name>.tar.gz )
+        Tar originally tar did not use (-) but you can now just run tar with your options. tar xvf. but if you want to tack on the (-) the command will work with it.
+        if you are not sure that a file is a tar file or not use the file command and it will analyze the contents and in the command line tell you what typw of file it is.
+NOTE: RHCSA requires you to know how to work with star as well. although it is not widely used.
+Compression:
+    compression allows you to make files take less disk space by taking out that redundancy, in all the examples of tar not one byte was compressed.
+        need to use seperate compression utilities such as gzip or bzip2. after creating home.tar you can gzip it by doing "gzip home.tar. gzip" and will replace home.tar with home.tar.gz which takes significantly less space.
+        or you can just include it in the tar command -z (gzip), -J (xz), -j (bzip2).
+
+KEY TOPIC:
+Tar commands
+    c → create archive
+    v → verbose output while tar is working
+    t → shows contents of archive
+    z → Compress/decompress while creating it by using gzip
+    j → Compress/decompress while creating it by using bzip2
+    J → Compress/decompress while creating it by using xz
+    x → extracts
+    u → updates
+    C → changes the working directory
+    r → appends files to an archive
+
