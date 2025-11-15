@@ -11,3 +11,88 @@ KEY TOPIC:
 for short files use cat, it just dumps the content onto your screen.
     Example: cat /etc/passwd
         cat dumps file in order so you can reverse cat to tac to get the top of the file at the bottom on your screen.
+
+head and tail you can filter output a bit:
+    head shows by default the first 10 lines. tail shows last 10 lines.
+        to adjut the number of lines you will do -n 5 for 5 lines.
+        Example: tail -n 15 /etc/passwd shows the last 15 lines for /etc/passwd
+    with tail another useful option is tail -f, shows last 10 lines but will refresh if there is new additions to the file.
+        Example: tail -f /var/log/messages (run as root user) and to end the command you press Ctrl + c
+    you can also combine head and tail. If you wanted to see line 11 of /etc/passwd you could do the following
+        Example: head -n 11 /etc/passwd | tail -n 1
+            this will only show you the last line which will be line 11!
+
+Filtering:
+cut is a useful command when it comes to filtering out specific fields.
+    cut -d is pretty popluar. Syntax cut <option>... <file>... cut -d : -f 1 /etc/passwd
+        -d → delimeter
+        -f → number of fields
+
+Sort File contents and output
+sort does what it reads as,
+    you can pair it with cut to sorts the contents of the first column in the etc/passwd file
+        cut -d : -f 1 /etc/passwd | sort
+sort command sorts in byte order, which is the order in which the characters appear in the ASCII text table.
+    that means capital letters are before lowercase letters.
+        captial letters → 65-90
+        lowercase letters → 97-122
+    Taking a side note here to memorize ASCII table
+        the bin is read from right to left 00000001 = 1
+    With that in mind that is sometimes not convenient, thankfully sort has multiple options offerings.
+        cut -f 3 -d : /etc/passwd | sort  -n → for numerical or | sort -rn for reverse numerical
+        du -h | sort -rn → for the largest files first in the list.
+    wc is output as number of lines →  the number of words → number of characters.
+
+Regex:
+there are flexible patterns in linux known as regular expressions often called regex.
+    grep → the general regular expression parser: used to search files for a specific string.
+        example: grep anna /etc/passwd
+line anchors → the type of regex that specifies where in a line of output the result is expected is known
+
+KEY TOPIC:
+    A regular expression is a search pattern that allows you to look for specific text in an advanced and flexible way
+
+escaping in regex → it is a good idea to prevent regex from being interpreted by the shell.
+    you don't need it all the time but it is good practice to include it so that way there is no confusion
+        Example: rather than grep ^anna /etc/passwd do grep '^anna' /etc/passwd
+wildcards → characters to look for one specific character.
+    Example: r.t would match (rot,rat,rut)
+    Example2: r[aou]t would match (rot,rat,rut but not rit and ret)
+multiplier* → this matches 0 or more of the previous character
+if you are looking for a specific number of the previous character this also works → re\{2\}d
+    you will match reed and not red.
+
+Extended Regex:
+when using grep you will have to add on -E (grep also has egrep *I think it is the same thing not sure.)
+
+KEY TOPIC
+    ^text → matches line that starts with specified text.
+    text? → matches line that ends with specified text.
+    . → wildcard (matches single character)
+    [abc] → matches a,b, or c
+    ? → Extended regex that matches 0 or one of the preceding character.
+    + → Extended regex that matches one or more of the preceding character.
+    * → matches zero to infinite number of preceding characters
+    \{2}\ → matches exactly 2 of the previous characters
+    \{1,3}\ → matches minimum of 1 and a max of 3 of the previous character
+    colou?r → matches - or one of the previous character. THis makes the previous character optional, which in this example would match both color and colour
+    (...) →  used to group multiple characters so that the regex can be applied to the group.
+
+given the following "/web(/.*)?"
+    we have to start with the ?
+        that indicated that the part in the braces may occur 0 or one time.
+    the pattern starts with a slash,which is just a slash, followed by 0 or more characters. so this means that just the directory name gives a match, but also the directory name followed by just a slash, or a slash that is followed by a filename
+        Example:
+            1. web 
+            2. /web
+            3. /web/
+            4. /web/index.html
+
+Grep KEY TOPICS:
+    -i → matches upper- and lowercase letters (i.e, not case sensitive)
+    -v → shows only lines that do not contain the Regex
+    -r → searches in the current directory and all subdirectories
+    -e → searches for lines matching more than one regex. use -e before each regex you want you use
+    -E →  Interprets the search pattern as an extended regular expression
+    -A <number> → shows <number> of lines after the matching regex
+    -B <number> → shows <number> of lines before the matching regex
