@@ -96,3 +96,9 @@ Grep KEY TOPICS:
     -E →  Interprets the search pattern as an extended regular expression
     -A <number> → shows <number> of lines after the matching regex
     -B <number> → shows <number> of lines before the matching regex
+
+Awk and Sed (says to not worry about awk and sed too much but seem very useful)
+    These seem to be more powerful than grep and this book barely touches on how to use them, I think I will add more context on them here.
+    Awk - well stumbled onto https://quickref.me/awk.html and that seemed to be more than sufficiant on how to sum up awk.
+    Sed - https://quickref.me/sed.html
+
