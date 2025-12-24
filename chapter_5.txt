@@ -1,0 +1,53 @@
+Hello again it has been a while! I had a number of things pop up and had to take care of them so this took a backseat for a little,
+I had work travel pop up and moved in that time, this has been the first time I have sat at my computer in a little while.
+
+Difference in console and terminal:
+    console- the common notion is that a console is the environment that the user is looking at. That means that the console is basically what you see when you are looking at your computer screen.
+    Terminal- it is an environment that is opened on the console and provides access to a non-graphical shell, typically Bash. This is the command-line env that can be used to type commands.
+
+They are essentially the same but the one difference is that you can have multiple terminals open on a console you cannot have multiple consoles open on one terminal.
+
+If the linux server boots with a graphical env(the so-called graphical target) you see a login prompt requesting you to select a username and password.
+
+it says that if the root user is enabled that you should not use it because you can cause damage, I believe that but on the same token will try and abide by that and likely fail. sudo is an amazing substitution but the danger behind root is fun...
+Here is a list of reasons to not use root:
+    -Logging in this way will make it more difficult to make those critical errors
+    -On many occasions, you will not need root permissions anyways.
+    -If you only allow access to normal users and not to root, it will force an attacker to guess 2 different things: the name of that specific user as well as the password of that user
+    - If you do need root access, you can use the sudo -i command from the local usr env to open a root shell. note that you are allowed to do this only if you have sudo privileges and you have to type your current user password after using the command.
+    -If you know the root user password, use su - to open a root shell. this command will prompt the root user password and you will be able to work as root until you type exit.
+        note that sudo -i command only works for authorized users and doesn't require the user to enter the root password, and with that in mind that is why it is considered more secure.
+    
+Terminals are opened as a subshell, you do not have to log in to each terminal again and will get access as the same user account that was originally used to login.
+
+Linux uses the concept of virtual terminals... this feature allows you to open six different terminal windows from the same console at the same time and use key sequences to navigate between them
+    F1: Gives access to the GNOME DISPLAY MANAGER (GDM) graphical login
+    F2: Provides access to the current graphical console
+    F3: Gives access back to the current graphical session
+    F4: Gives access to nongraphical consoles.
+    
+    one really cool thing that I just learned about is popd and pushd you can traverse the directories a bit easier.
+
+w will show you all the users that are on.
+
+**KEY TOPIC**
+For administrators who really know linux very thoroughly, rebooting servers is seldom necessary. The more experienced admins will be able to trigger the right parameter to force a process to reread its configs.
+These are the few situations where you will need to reboot:
+    - To recover from serious problems such as server hangs and kernel panics
+    - To apply kernel updates
+    - To apply changes to kernel modules that are being used currently and there-fore cannot be reloaded easily
+
+When a server is rebooted all processes need to shutdown properly, if the server is jsut stopped by pulling the power plug much data will typically be lost.
+
+**Seems important but kinda glossed over (I expect this to be in RHCE)**
+The reason is that processes that have written data do not typically write that data directly to disk, but instead store it in memory buffers (a cache) from where it is committed to disk when it is convenient for the OS
+
+to issue a proper reboot, you have to alert the Systemd process. the systemd process is the first process that was started when the server was started, and it is responsible for managing all other processesm directly or indirectly.
+
+Commands:
+    - systemctl reboot or reboot
+    - systemctl halt or halt
+    - systemctl poweroff or poweroff
+        IF none of these options are working and the machine is not accessable physically you have one last command:
+        - echo b > /proc/sysrq-trigger (this is done as a root shell.)
+
