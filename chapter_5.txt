@@ -51,3 +51,36 @@ Commands:
         IF none of these options are working and the machine is not accessable physically you have one last command:
         - echo b > /proc/sysrq-trigger (this is done as a root shell.)
 
+SSH:
+Some servers will not be accessable physically so you will have to access them via ssh.
+To make sure that you can access them using them you need the 'Service' sshd as well as an ssh client.
+    'Services' from my brief intro to Linux seem very important.
+On the remote server that you want to access, the sshd service must be running and offering services, which it does at its default port 22
+    and it should not be blocked by the firewall on that port.
+        if you want a more secure ssh connection change the port to 2222
+After you install it redhat starts the sshd process automatically, and by default it is not blocked by the firewall.
+
+If the ssh port is open, you can access it using the 'ssh' command from the command line.
+    The ssh commmand by default tries to reach the sshd process on the other server on port 22, to use another port you must use the command:
+        'ssh -p' the -p is the flag that is used for port. <example: ssh -p 222 remote@<IP_addr>>
+        you can also ssh on all Linux distros and on Mac computers as well.
+            Thankfully the handy Windows does not have WSL(windows subsystem for linux) you cannot use SSH and must use a SSH client (Like PuTTY)
+                Other options for windows are: MobaXterm, KiTTY, mRemoteNG, Bitvise, and Xshell.
+
+The simple way to access a remote server is: ssh <user>@<ip_addr>
+    after you do that you will be prompted for a password, this is the password that that user uses on the remote server.
+    you can also access other users accounts you just have to specify in the user field before the @ <example: root@<ip_addr>
+
+To make sure that your sshd service is running use 'systemctl status sshd'
+    for this example 2 servers will be used server and server2
+    1- server2: run systemctl status sshd
+        1a- run ip a s | grep inet (look at the ip address and make note of it)
+    2- server1: run ip a s | grep inet (make note of the ip address)
+        2a- on an unprivlaged shell run command 'ssh root@<server2 address>
+            this connects to the sshd process on server2 and opens a root shell.
+    3- Before you are promted for a password you will see a message indicating that the authenticity of server2 cannot be established
+        3a- This message is shown because the host is not known yet on your current host, which might involve a security risk.
+            Type yes to continue
+    4- When prompted enter the root password. After that you are logged into server2
+    5- To leave type exit and press enter.
+    
