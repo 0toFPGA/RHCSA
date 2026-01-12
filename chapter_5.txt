@@ -83,4 +83,23 @@ To make sure that your sshd service is running use 'systemctl status sshd'
             Type yes to continue
     4- When prompted enter the root password. After that you are logged into server2
     5- To leave type exit and press enter.
-    
+
+If the connection to the server that you are trying to connect to is slow use the -v command, this will start the ssh in verbose mode and show you all the components of it starting up
+After you connect to the remote server a public key fingerprint is stored in the file:
+    ~/.ssh/known_hosts
+the next time that you connect to the same server this fingerprint is checked with the encryption key that was sent over by the remote server to initialize contact.
+if it matches, you will not see the security message anymore.
+
+Sometimes the the host key fingerprint does not match the key fingerprint that is stored locally. This is potentially dangerous for the following reasons:
+    1. you could have connected to the wrong server. (which could be an evildoer)
+    2. OR, it does happen, but the IP address could be in use by another machine
+    3. the SSHd service was deleted/reinstalled on the target machine
+
+If you encounter a mismatch between the host key and the cached key, remove the key fingerprint from the ~/.ssh/known_hosts
+        LIKE i called earlier the book glosses over SED AND AWK and is now telling you to  use sed to remove this file...
+    sed -i -e '25d' ~/.ssh/lnown_hosts
+    (assuming that is the line that contains the erroneous key)
+by default through ssh you cannot start graphical applications. that is because of security; a remote host cannot display screens on your computer without specific permissions to do that.
+The 2 requirements for starting applicaions through an ssh connection are as follows:
+    1- An X server must be running on the client computer, the X server is the software component that creates the graphical env.
+    2- The remote host must be allowed to display screens on the local computer.
