@@ -103,3 +103,17 @@ by default through ssh you cannot start graphical applications. that is because 
 The 2 requirements for starting applicaions through an ssh connection are as follows:
     1- An X server must be running on the client computer, the X server is the software component that creates the graphical env.
     2- The remote host must be allowed to display screens on the local computer.
+
+The easiest way to allow the remot host to display graphical screens on your computer is by adding the -Y option to the ssh command.
+    ssh -Y example@server - to connect to server and also be able to start graphical environments.
+
+*** KEY TOPIC ***
+    -v - Verbose, shows in detail what is happening while establishing the connection
+    -Y - Enables support of graphical applicaions
+    -p <PORT> - Used to connect to an ssh service that is not listening on the default port 22
+
+As an admin you can also create a systemwide config that allows you to use X forwarding, which is starting graphical applications through ssh.
+    as root, open /etc/ssh/ssh_config and make sure it includes the following line
+        ForwardX11 yes
+    the next time that you use ssh, X forwarding will be available by default
+
