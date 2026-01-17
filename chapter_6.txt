@@ -1,0 +1,35 @@
+Understanding Different User types
+**KEY TOPIC**
+there are privilaged users and unprivlaged users.
+the default privilaged user is root. this user account has access to to everything on linux and is allowed to work in system space without restrictions.
+The root user is meant to perform system admin tasks and should be used for only that...
+On rhel 9 (modern linux), the roor user is often disabled. you can change that at the first install, you can make a regular user and choose the option "Make this User Admin" you don't have to set a root password.
+    you can use sudo when admin privileges are needed.
+
+to get info about a user account you can use the id command. When using this command from the command line, you can see details about the current user.
+    id
+        or
+    id <user>
+
+On all linux systems, by default there is the user root, also known as the super-user.
+This account is used for managing Linux and has no restrictions at all. Root for instance can create other user accounts on the systems.
+Examples of things that need root permissions:
+    installing software
+    managing users
+    creating partitions on disk devices
+        Generally speaking, all tasks that involve direct access to devices need root permissions.
+
+***KEY TOPIC***
+    su = Opens a subshell as a different user, with the advantage that commands are executed as root only in the subshell.
+    sudo = Allows authorized users to work with admin privileges.
+    PolicyKit = Enables you to set up graphical utilities to run with admin privileges
+
+from a terminal window you can use the su command to start a subshell in which you have another identity.
+To perform admin tasks, for instance, you can log in with a normal user account and type su to open a root shell.
+you can also do the following:
+    su <user> - you will be prompted for a password
+The subshell that is started when using su is an env where you are able to work as the target user account., but env settings for that user account have not been set.
+If you need access to the entire env of the user account, you can use the following.
+    su - = this starts a login shell.
+when you start a login shell, all scripts that make up the user env are processed which makes you work in an env that is exactly the same as when logging in as that user.
+
