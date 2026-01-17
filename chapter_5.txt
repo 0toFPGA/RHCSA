@@ -117,3 +117,55 @@ As an admin you can also create a systemwide config that allows you to use X for
         ForwardX11 yes
     the next time that you use ssh, X forwarding will be available by default
 
+This is one of my favorite commands that i use on a daily basis, I cannot wait to learn more about it,
+SCP... If a host is running the sshd service that service can also be used to securely transfer files between systems.
+    scp- files to be copied
+    rsync- files to be syncronized
+Also, the SFTP command is a part of the SSH solution and enables users to use an FTP command line syntax to transfer files using sshd.
+
+scp is similar to cp, which allows you to transfer files locally, but across systems.
+    to copy this is the syntax to move /etc/hosts to server2's /tmp dir
+        scp /etc/hosts server2:/tmp
+    if you wanted to be root and copy the /etc/passwd file from server 2 to your current dir this is the command
+        scp root@server2:/etc/passwd ~
+            (this is new to me and I will be utilizing this!!)
+    if you want to copy a full dir and all the contents to /tmp dir this is the syntax
+        scp -r server2:/etc/ /tmp
+
+SFTP = Secure File Transfer Protocol
+When working with sftp, you open an FTP client session to the remote server where the only requirement on the remote server is that it should be running the sshd process.
+From the FTP client session, you use typical FTP client commands, like put and get to download a file.
+Notice when working with SFTP, the local  dir is important, even if after opening the FTP session you only see the remote dir.
+    when you download a file using the get command it will be stored in the current local dir. When uploading using put it will search the current local dir.
+
+RSYNC
+rsync command uses ssh to sync files between a remote dir and a local dir. The advantage of syncing files is that only the differences need to be considered.
+if you sync a 100-Mib file in which  only a few blocks have changed since the previous sync, only the changed blocks will be synced.
+    THIS approach is called delta sync.
+
+RSYNC command options
+    -r = Sync entire dir tree
+    -l = copies sym links as sym links
+    -p = preserves permissions
+    -n = performs only a dry run, not actually syncing anything
+    -a = uses archive mode, thus ensuring that entire sub-dir trees and all file properties will be synced
+    -A = uses archive mode and in addition syncs ACLs (access control lists)
+    -X = syncs SELinux context as well.
+
+Configuring Key-Based Auth
+If ssh is used on the internet, it might not be a good idea to allow password logins. SSH is more secure when using public/private keys for auth.
+This is normally enabled by default, Only if that is not possible is a passwork login used. The only thing that you need to do is enable KEY-based login is to create a key pair;
+    everything else is organized by default already.
+When using pub/priv key auth, the user who wants to connect to a server generates a pub/priv key pair. The pub key is stored on the home dir of the target user on the SSH server in the file .ssh/authorized_keys
+    when authenticizing using key pairs, the user generates a hash derived from the private key. this hash is sent over to the server and if on the the server it proves to match the pub key that is stored on the server, the user is authenticated.
+
+When creating these pub/priv keys you have the option to add a passphrase. If you want max security, you should enter one. You are prompted EVERY time that you use the private key to auth a remote host.
+    That is very secure but not very convinient. for maximal convinience press enter twice when generating the pub/priv key pair to confirm that you do not want a passphrase.
+
+To create a key pair use the command:
+    ssh-keygen
+Next use
+    ssh-copy-id
+        to copy the pub key over to the target server
+
+
