@@ -33,3 +33,42 @@ If you need access to the entire env of the user account, you can use the follow
     su - = this starts a login shell.
 when you start a login shell, all scripts that make up the user env are processed which makes you work in an env that is exactly the same as when logging in as that user.
 
+sudo
+if a non-root user needs to perform a specific sys admin task, the user does not need root access; instead, the sys admin can configure sudo to give that user admin permissions to perform  the specific task.
+the user then uses sudo before the command they want to run (enter a password).
+    Example: Instead of useradd as root
+             sudo useradd
+             Password: <insert_user_password>
+you can also "Grant Admin Permissions" when you install RHEL for the first time.
+    located in creating user
+        this adds that user to the wheel group
+    
+These are the steps to make a user account a member of the wheel group:
+    1. usermod -aG wheel user
+    2. visudo
+        2a. %wheel ALL=(ALL) ALL must be included
+Apart from this method, which would give a user access to all admin commands, you can use
+    visudo /etc/sudoers -> this is where you can give user access to specific commands only
+
+Example: timmy ALL=/usr/bin/useradd,/usr/bin/passwd -> in the file /etc/sudoers and it will only allow timmy to run useradd and passwd with admin privileges
+
+TIP:
+when you are using sudo you are prompted for a password. Based on this a password token is generated, this allows you to run new sudo without having to input a password again.
+However this only lasts for 5 min. which in the file /etc/sudoers you can edit it to be longer than the 5 minutes to 240minutes
+    add the line Defaults timestamp_timeout=240
+be careful when giving users access to the passwd command, that would allow the users to change the password of the root user.
+to prevent this you can add an exception to "timmy ALL=/usr/bin/useradd,/usr/bin/passwd"
+    timmy ALL=/usr/bin/useradd,/usr/bin/passwd, ! /usr/bin/passwd root
+    this allows timmy to change all passwords except the root password
+To assign sudo privilages to individual users or groups of users, you can change the contents of /etc/sudoers using visudo. A better practice is creating a drop-in file in the dir /etc/sudoers.d
+this drop-in file would have the exact same contents as the modification you would make to /etc/sudoers, with the benefit that the custom config is seperated from the standard config that was created while installing Linux
+
+TIP
+it is convinient to use pipes in sudo comamnds. By default, this is not allowed, but if you use:
+    sudo sh -c you can use any command containing a pipe as its argument.
+    example: sudo sh -c "rpm -qa | grep ssh" -> this is rpm -qa(query all) | grep ssh (this will now look for all packages with ssh in them and print them out for you)
+
+PolicyKit:
+Most admin programs with a graphical user interface use PolicyKit to authenitcate as the root user.
+If a normal user who is not a member  of the group wheel accesses such an application, that user will be prompted for authentication.
+For Exam you do not have to know the details of PolicyKit, but it is good to know that you can use the pkexec as an alt to sudo in case you ever completely lose sudo access to a system. In that case, use pkexec visudo to be able to repair the sudo config.
