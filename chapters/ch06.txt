@@ -72,3 +72,5 @@ PolicyKit:
 Most admin programs with a graphical user interface use PolicyKit to authenitcate as the root user.
 If a normal user who is not a member  of the group wheel accesses such an application, that user will be prompted for authentication.
 For Exam you do not have to know the details of PolicyKit, but it is good to know that you can use the pkexec as an alt to sudo in case you ever completely lose sudo access to a system. In that case, use pkexec visudo to be able to repair the sudo config.
+
+Creating and Managing User Accounts
