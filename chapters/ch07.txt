@@ -1,0 +1,194 @@
+Permissions:
+
+Displaying ownership:
+Every file and every dir has 2 owners
+    user owner
+    group owner
+Apart from that there is the "others" entity, which also considered to be an entity to determine the permissions a user has.
+    ll -l is the command to view permissions.
+These owneers are set when a file or dir is created, on creation the user who creates the file becomes the user owner, and the primary group of that user becomes the group owner.
+To determine whether you as a user have permissions to a file or a dir, the shell checks ownership. this happens in this order:
+    1. Shell checks whether tou are the user owner of the file you want to access, which is refered to as the user of the file. If you are the user you fet the permissions that are sset for the user, and the shell looks no further.
+    2. If not the user owner, shell checks whether you are a memeber of the group owner. if you are you get access to the file with the permissions of the group and the shell looks no further.
+    3. If you are neither the user or group owner and have not obtained permissions through ACLs (access control lists) you get the permissions of the others entity
+
+Using the ls command, you can display ownership for files in a given dir, it may on occasion be useful to get a list of all files on the system that have a given user or group as owner. To do this use the find command with the arg -user.
+    find / -user <user> 
+    find / -group <user>
+
+Changing User ownership
+To apply appropriate permissions, the first thing to consider is ownership.
+    chown who what
+    chown <user> files
+chown has a few options one is particularly useful: -R; it allows you to reccursively set ownership of everything in the current dir and everything below.
+    chown -R <user> /files
+
+Changing group ownership
+you can do it with chown or chgrp. if you use chown you can us a . or a : in front of the group name.
+    chown .account /home/account changes the group owner of dir /home/account to the group account
+
+Examples:
+    chown tim myfile - sets user tim as the owner of myfile
+    chown tim.sales myfile - sets tim as user owner and group sales as group owner of myfile
+    chown tim:sales myfile - sets tim as user owner of myfile and group sales as group owner of myfile
+    chown .sales myfile - sets group sales as group owner of myfile without changing the user owner.
+    chown :sales myfile - sets group sales as group owner of myfile without changing the user owner.
+
+you can also use the chgrp command to change group ownership.
+    chgrp account /home/account (can use -R here as well)
+
+Understanding default ownership:
+you may have notices that when a user creates a file, default ownership is applied. Te user who creates the file automatically becomes user owne, and the primary group of that user automatically becomes group owner. Normally, this is the group that is set in /etc/passwd as the useres primary group . 
+If the user is a member of more groups, however, the user can use the newgrp command to change the effective primary group so that new files will get teh new primary group as group owner
+    groups <user>
+If the current user wants to change the effective primary group, user can use the command newgrp followed by the name of the group that user wants to set as the new effective primary.
+    newgrp sales
+        seems to basically open a "shell" where all files that are created in that shell inherit that group name for primary (really cool)
+    exit takes you out of it.
+
+to be able to use the newgrp command the user must be apart of that group. If you set a group password and you are not apart of that group you can use the newgrp command and enter the group password when prompeted.
+
+Managing Basic Permissions:
+This basic permission system uses 3 permissions that can be applied to  files and dirs.
+3 basic permissions: (do different things when applied to a file/Directory)
+    read-
+        file: if applied to a file gives the right to open the file for viewing. Therefore you can read the contents, but it also means  that your computer can open the file to do something with it...
+        Directories: If aplied to a dir, read allows you to lust the contents of that dir. This does not allow you to read files in the dir.
+
+Linux permission system does not know about inheritance.
+
+    write-
+        file: allows you to write to modify the contents of the file. This file must be existing already. It does not let you create or delete new files, to do that you need it on the dir where you want to create the file.
+        Directory: Allows you to create/remove new/existing files and sub Directories
+
+    execute- WILL NEVER BE SET BY DEFAULT (makes linux almost completely immune to viruses)
+        file: used when you need to execute a program file, 
+        Directory: need the execute if you want to do anythin in that dir. you are allowed to use the cd command to enter that dir.
+    
+Simple:
+    read
+        files- View file contents
+        dir- List ocntents of dir
+    write
+        files- change contents
+        dir- create and delete files and subdirs
+    execute
+        files- run a program
+        dir- change to the dir
+    
+Applying read, write and execute permissions:
+To apply permissions you use the chmod command. When using chmod, you can set permissions for user,groups, and others/ you can use this command in 2 modes:
+    relative mode: you work with 3 indicators
+        First you specify for whom you want to change the permissions Choose from: user(u) group(g) other(o) all(a)
+        Then add an operator (+ -)
+    r- read
+    w- write
+    x- execute
+    absoulte mode: 3 digits are used to set the basic permissions the 3 digits represent user,group and other permissions
+    Read =    4
+    Write =   2
+    Execute = 1
+
+When setting permissions calculate the value that you need. If you want to set rwx for user and rx for groups and rx for others you would use the command:
+    chmod 755 /somefile
+when you use it in this way all current permissions are replaced by the permissions you set.
+
+When changing permissions in relative mode the commnad is as follows for all users (you may omit the "to whom" part  to add or remove permissions for all entities)
+    chmod +x somefile
+Also in relative mode you may use more complex commands as well: the below adds the write permission to the group and remoes read for others.
+    chmod g+w, o-r somefile
+
+Files becoming an executable in an uncontrolled way are a major security issue. for that reason if you want to apply the execute permission in a reccursive way, you should apply -X not -x.
+    DON'T chmod -R a+x files
+    DO chmod -R a+X files 
+This ensures that subdirs will obtain the execute permission but the execute permission is not applied to any files.
+
+Managing advanced permissions:
+Linux also has advanced permissions as well as the basics. Thses are not permissions you would set by default, but they are super usedul in advanced scenarios.
+
+Understanding Advanced Permissions:
+There are 3 advanced permissions:
+    1. Set User ID(SUID)- 
+        On very rare occasions you want to set this permission on executable files. By default, a user who runs an executable file runs it with their own permissions. For normal users that means the use of the program is restricted.
+        In some cases users need special permissions for the execution of a certain task.
+            For example a user that needs to change their password, needs to write their new password to the /etc/shadow file. This file is not writeable for users who do not have root permission.
+            SUID permission offers a solution to this problem. on the /usr/bin/passwd util, this permission is applied by default. That means when a user is changing their password the user temporarily has root privilages,
+            because /usr/bin/passwd util is owned by the root user, which allows the user to write /etc/shadow.
+            ls -l shows you that where the x would normally be there is an 's' (which means that both suid and execute are set), where S means that SUID is set.
+                ls -l /usr/nin/passwd
+                    -rwsr-xr-x. 1 root root 32648 Aug 10  2021 /usr/bin/passwd
+        SUID seems super useful (and it is in some usecases) but at the same time you can make it dangerous if applied wrong. You can give away root permission.
+    2. Set Group ID(SGID)-
+        Has 2 effects. If applied to an executable it gives the user who created the file the permissions of the group owner of that file. So SGID can accomplish more or less the same thing that SUID does. For this purpose that is why SGID is not widely used.
+        When applied to a directory. SGID may be useful becaise it can be used to set default group ownership on files and subdirs created in that dir. By default when a user creates a file it uses that users primary group to set the group owner of that file.
+        That is not always helpful, because users have thier primary group set to a group with the same name as the user and of which is the only user of that group, so by default files that user creates will be shared with no one else.
+            SGID permission shows in the output of ls -l as an s at the position where you would normally find the group execute permission.
+                ls -ld /data/account
+                    drwxrws---. 2 linda account 23 Jan 25 10:58 /data/account
+            If there is an uppercase S only SGID is set.
+    3. Sticky bit-
+        This is useful to protect files against accidental deletion in an env where multiple users have to write permissions in the same dir. If a sticky bit is applied a user mayy delete a file only if they are the user owner of the file or of the dir that contains the file.
+        It is for that reason that sticky bit, by default, is applied to the /tmp dir. it can be useful on shared group dirs as well.
+        without sticky bit if a user can create fiels in a dir, the user can also delete files from that dir.
+        When you apply the sticky bit, a user can delete files only if one of the following is true:
+            -The user has root access
+            -The user is the owner of the file.
+            -The user is owner of the dir where the file exists.
+        using ls -l you can see a T at the position where you normally see the execute permission for others (a lower case t indicates that sticky bit as well as execute permissions are set)
+                ls -ld /data/account
+                    drwxrwsr-T. 2 linda account 23 Jan 25 10:58 /data/account
+TIP- Make sure that you know how to manage these advanced permissions. the objectives state that you need to be able to user SGID to create a shared dir.
+
+To apply SUID,SGID, and sticky bit you can use chmod
+    SUID = 4
+    SGID = 2
+    sticky bit = 1
+To set rwx for users rx for group and others while also setting GUID use the following:
+    chmod 2755 /somedir
+It is easier in absolute mode, that way you do not have to worry about overwriting permissions
+    SUID = chmod u+s
+    SGID = chmod g+s
+    sticky bit = chmod +t
+
+Setting default permissions with umask:
+To set default permissions you use either file acls or umask. ACL's were within the scope of the last RHCSA exam but don't need to know them for 9. We will go over deault permissions with umask.
+When creating a new file you probably notice default permissions are set. These permissions are determined by the umask setting. This shell setting is applied to all users when logging in to the system. In the umask settings, a numeric value is used that is subtracted from the max permissions that can be set automatically to a file.
+    the max setting for files is 666 and for dirs is 777.
+of the digits used in the umask, like the numeric args for the chmod command, the first digit refers to user permissions, second group, third others.
+The default umask of 022 gives 644 for all new files and 755 for all dirs creates on the server.
+UMASK OVERVIEW **KEY TOPIC**
+  Value     Applied to files            Applied to directories
+    0        Read and write                 Everything
+    1        Read and write                 Read and write
+    2             Read                      Read and Execute
+    3             Read                      Read
+    4             Write                     Write and Execute
+    5             Write                     Write
+    6             Nothing                   Execute
+    7             Nothing                   Nothing
+
+There are 2 ways to change the umask setting:
+    for all users- 
+        you must make sure the umask setting is considered when starting the shell env files as directed by /etc/profile.
+            The right approach is to create a shell script umask.sh in the /etc/profile.d dir and specift the umask you want to use in that shell script.
+    individual users-
+        Change the umask setting in a file with the name .profile, which is created in the home dir of an individual user. Settings applied in this file are applied for the individual user only.
+            this is a nice method if you need more granularity. A usecase is changing the default umask for root user to 027, whereas normal users work with the default umask 022.
+
+Working with User-Extended Attributes:
+When you work with permissions, a relationship always exists between a user or a group object and the permissions these user or group objects have on a file or dir. An alt method of securing files on a linux server us by working with attributes.
+    Attributes- do their work regardless of the user who accesses the file.
+Many attributes are undocumented. Some are available but not yet implemented. Do not use them: they bring you nothing. The following are the most useful:
+    A- This attribute ensures that the file access time of the file is not modified. Normally everytime the file is opened the file access time must be written to the files metadata. This affects performance in a negative way;
+        Therefore, on files that are access on a reagular basis, the A attribute can be used to disable this feature.
+    a- This attribute allows a file to be added to but not be removed.
+    c- If you are using a filesystem where volume-level compression is supported, this file attribute makes sure that the file is compressed the first time the compression engine becomes active.
+    D- This attribute makes sure that changes to files are written to disk immediately, and not to cache first. This is useful on important database files to make sure that they do not get lost between fule cache and hard disk.
+    d- This attribute makes sure the file is not backed up in backups where the legacy dump util is used.
+    I- This attribute enables indexing for the dir, where it is enabled.
+    i- this attribute makes the file immutable. Therefore no changes can be made to the fileat all, which is useful for files that need a bit of extra  protection.
+    s- this attribute overwrites the blocks where the file was stored with 0's after the file has been deleted.
+    u- saves undelete information. This allws a utility to be developed that works with that informationto salvage deleted files.
+to apply these attributes use the command chattr
+    chattr +s somefile
+to view all current attributes applied use lsattr
