@@ -103,4 +103,77 @@ Fields of /etc/shadow file:
     Days before password may be changed: This allows sys admins to use stricter password policies, where it is not possible to change back to the original password immediatly after a password has changed. Typically this field value is set to 0.
     Days after which password must be changed: This contains the max validy period of passwords. The default is set to 99,999 or about 274 years.
     Days before password is about to expire that user is warned: This field is used to warn a user when a forced password change is upcoming, it is defualt 7 days.
-    
+
+Home Directories:
+there are many solutions for creating users on a linux server. To start, you can edit the contents of the /etc/passwd and the /etc/shadow config files directly in an editor, using vipw command (with the risk of making an error that could make logging in impossible to anyone).
+Another option is to use useradd, which is the tool that you should use for creating users.
+to remove users you should use the command userdel. use userdel -r to remove a user and the complete user env.
+
+The useradd util is probably the most common tool on linux for adding users. It allows you to add a user account from the command line by using many of its parameters. use the command:
+    useradd -m -u 1201 -G sales,ops <user> to create a user who is a member of the secondary groups sales and ops with UID 1201 and add a home dir to the user account as well.
+All users will have a home dir. For people, the fomr dir is the dir where personal files can be stored. for system accounts, the home dir often contains the working env for the service account.
+As an admin, you normally will not change home dir-related settings for system accounts because they are created automatically from the RPM post-installation scripts when isntalling the related software packages.
+If you have people who need user accounts, you probably want to manage home dir contents a bit.
+When creating home dirs(which happens by default when creating users), the contents for the "skeleton" dir is copied to the user home dir. the skeleton dir is /etc/skel, and it ocntains files that are copied to the user home dir at the moment this dir is created.
+these files will also gety the appropriate permissions to ensure that the new user can user and access them.
+By default the skeleton dir contains mostly config files that determine how the user env is setup. If in your env specific files need to be present in the home dirs of all your users you take care of that by adding the files to the skeleton dir.
+
+Default shell:
+Most regular users normally have a defualt shell. THis is the program that is started after successful authentication. For most  users, this shell is set to /bin/bash. system should not have an interactive shell as the default shell.
+for most system usersthis shell is set to /sbin/nologin. To set or change the default shell using useradd or usermod, use the -s option.
+Use for instance useradd <user> -s /sbin/nologin to make sure that this user will not be allowed to login.
+
+Managing user properties:
+You can user vipw but that can mess up your config files use Usermod instead.
+Usermod can be used to set all properties of users as stored in /etc/passwd and /etc/shadow plus some additional tasks; such as managing group membership.
+The one thing it does not do well is setting passwords. Although usermod has the option -p that tells you to "use Encrypted password for the new password" it expects you to do the password encryption before adding the user account. That does not make it overly useful.
+
+Config files for User Management defaults:
+when working with tools like useradd, some default values are assumed. Those values are stored in the following 2 files:
+    /etc/login.defs
+    /etc/default/useradd
+
+**KEY TOPIC** /etc/login.defs variables and how they are set.
+    MOTD_FILE- defines the file that is used as the message of the day file. In this file you can include messages to be displayed after the user has logged in successfully.
+    ENV_PATH- Defines the $PATH variable, a list of dirs that should be searched for executable files after logging in.
+    PASS_MAX_DAYS,PASS_MIN_DAYS, and PASS_WARN_AGE- Define the default password expiration paroperties when creating new users
+    UID_MIN- Indicates the first UID to use when creating new users
+    CREATE_HOME- Indicates whether or not to create a home dir for new users
+
+Managing Password properties:
+chage and passwd- pretty straightforward as long as you know what the options are used for.
+    passwd -n 30 -w  2 -x 90 <user> = sets the password for user to minimal usage period of 30 days warning 3 days before expiry and 90 days until expiry.
+    chage -E 2026-12-31 <user> to have the account for user till December 31st 2026
+to see current password management settings use chage -l
+    chage also has a interactive mode
+        chage <user>
+
+Creating a user ENV:
+When a user logs in an env is created. The env consists of some variables that determine how the user is working. one such variable is $PATH, which defines a list of dirs that should e searched when a user types a command.
+
+**KEY TOPIC** TO construct the user env a few files play a role:
+    /etc/profile: Used for default settings for all users when starting a login shell
+    /etc/bashrc: Used to define defaults for all users when starting a subshell.
+    ~/.profile: Specific settings for one user applied when starting a login shell.
+    ~/.bashrc" specific settings for one user applied when starting a subshell.
+
+Creating and Managing Group accounts
+Linux users can be apart of 2 different kinds of groups.
+    Primary- every user must be apart of this group, and only has 1 primary group. When a user creates a file the users primary group becomes the group owner of the file.
+    secondary- users can be a member of one or more secondary groups. secondary groups are important to get access to files. if the group a user is a member of has access to specific files, the user will get access to those files also.
+                working in secondary groups is important, in particular where linux is used as a server for people working in different departments to share files with one another. 
+
+Creating groups:
+you can use vigr but the recommended is groupadd
+
+Fields in /etc/group
+    Group name
+    Group password: not used much anymore
+    Group ID: a unique numeric group identification number.
+    Members: Names of users who are a member of this group(does not show users that are a member of this group as a primary)
+There is also a /etc/gshadow file: used to store group passwords (but no one uses it too much anymore.)
+    syntax: groupadd (-g to specify a group id)
+
+groupmod is also available to change group name or group ID.
+To add users to groups you have to use usermod -aG to add users to new groups that will be used as their secondary group.
+    lid -g <group> to check which users are a member of the group.
