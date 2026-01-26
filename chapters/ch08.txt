@@ -1,0 +1,258 @@
+Networking fundementals:
+To setup networking on a server, your server needs a unique address on the network. For this puropse Internet Protocol (IP) addresses are used. Currently 2 versions of IP addresses area relevant:
+**KEY TOPIC**
+    IPV4 addresses- These are based on 32-bit addresses and have 4 octets, seperated by dots such as 192.168.10.100
+    IPv6- These are based on 128-bit addresses and are written in 8 groups of hexadceimal numbers that are 16 bits each and seperated by colons.
+            An ipv6 address may look like this- fe80:badb:abe01:45bc:34ad:1313:6273:8798.
+                broken down looks like this
+                fe80= Link local address
+                11111111010000000:1011101011011011:1010101111100001:0100010110111100:0011010010101101:0001001100010011:01100111000100011:1000011110011000
+
+IP addresses:
+Origianlly IP addresses were assigned to computers and routers. Nowadays, many other devices also need IP addresses to communicate, all the devices will be refered to as node. Host will also be used  and that is typically the server providing services on the network.
+To make it easeier for computers to communicate with one another, every ip address belongs to a specific network, and to communicate with computers on another network a router is used.
+    a router is a machhine (often dedicated hardware that has been created for that purpose) that connects networks to one another.
+To communicate on the Internet, every computer needs a worldwide unique IP address. These addresses are scarse; a theoretical max of 4 billion addresses are available and that is not enough to provide every device on the planet with an IP address. 
+    IPv6 is the ultimate solution to the problem, because a very large number of ip addresses can be created in IPv6. Because many networks still work with IPv4, though, another solution exists: private network addresses.
+
+Private network addresses are addresses that are for use in internal networks only. Some IP addresses have been reserved for this purpose:
+    10.0.0.0/8 (a single Class A network)
+    172.16.0.0/12 (16 Class B networks)
+    192.168.0.0/16 (256 class C networks)
+when private address are used, the nodes that are using them cannot access the Internet directly, and nodes from the internet cannot easily access them. Because that is not very convenient, Network Address Translation(NAT) is commonly used on the router that connects the private network to the internet.
+In NAT, the nodes use a private UP address, but when accesing the internet, this private IP address is replaces with the IP address of the NAT router. Hence, nodes on the internet think that they are communicating with the NAT router, and not with the individual hosts.
+The NAT router in its turn uses tables to keep track of all connections that currently exist for the hosts in the network. Based on this table, the NAT router helps make it possible for computers with a private IP address to connect to hosts on the internet anyway. The use of NAT is very common.
+
+IPv6 Addresses:
+Lets look at a valid IPv6 address such as 02fb:0000:0000:0000:90ff:fe23:8998:1234
+In this address you can see the long range of 0's to make IPv6 addresses more readable, you can replace on range of zeros with :: instead. Also if a IPv6 address starts with a leading 0 you can omit it. With that in mind lets rewrite it:
+    2fb::90ff:fe23:8998:1234
+
+IPv4 Network masks:
+To know which network a computer belongs to, a subnet mask is used with every IP address. The subnet mask defines which part of the network address indicates the network and which indicates the node.
+Subnet Masks may be written in the Classless Inter-Domain Routing (CIDR) notation, which indicates the number of bits in the subnet mask, or the classical notation, and they always need to be specified with the network address.
+    Examples:
+        192.168.10.100/24(CIDR notation) - indicates that a 24-bit network address is used
+        192.168.10.100/255.255.255.0 (classical notation)- means the same thing
+    
+Often network masks use multiple bytes. In the example 192.168.10.100/24 the first 3 bytes (the 192.168.10) form the network part, and the last byte (the number 100) is the host part on that network.
+When talking about network addresses, you use a 4-byte number, as well, in which the node address is set to 0. So in example 192.168.10.100/24, the network address is 192.168.10.0. In IPv4 networks, there is also always a broadcast address.
+    This broadcast address is the address that can be used to address all nodes in the network. In the broadcast address, all node bits are set to 1, which makes for the decimal number 255 if an entire byte is reffered to.
+    so the broadcast address for 192.168.10.100/24 is 192.168.10.255
+
+Binary Notation:
+Because thenumber of IPv4 addresses is limited, in modern IPv4 networks variable length network masks are used. These are network masks such as 212.209.113.33/27.
+In a Variable-length subnet mask, only part of the byte is used for addressing nodes, and the other part is used for addressing the network. In the subnet mask /27, the first 3 bits of the last byte are used to address the network, and the last 5 bits are for addressing nodes.
+Lets write it out:
+    212.209.113.33 = 11010100.11010001.00001010.00100001
+    /27 = 11111111.11111111.11111111.11100000
+when applying the subnet mask to the IP address, you can see that the first 3 bits of the IP address belong to the network, so the network is 00100000. And if you use a binary calculator, you can see  that it corresponds with the decimal IP address 32
+
+**KEY TABLE**
+Binary Value    Decimal Value     
+00000000              0
+00100000              32
+01000000              64
+01100000              96
+10000000              128
+10100000              160
+11000000              192
+11100000              224
+
+So based on this information, if you consider the IP address 212.209.113.33/27 again, you can see that it belongs to the network 212.209.113.32/27 and that in this network the broadcast address is 212.209.113.63; therefore with a /27 subnet mask 30 nodes can be addressed per network. you'll get 32 IP addresses but 2 of them are for the network and broadcast address.
+
+Mac Addresses:
+IP addresses are the addresses that allow nodes to communicate to any other nod on the internet. They are not the only addresses in use though. Each Network card als has a 12-byte Mac address. 
+Mac addresses are for use on the local network (that is the local physical network or local WLAN, just up to the first router that is encountered); they cannot be used for communication between nodes that are on different networks. 
+Mac addresses are important because they help computers find the specific network card that an IP address belongs to.
+    Example Mac address:
+        00:0c:29:7d:9b:17
+Notice that each MAC address consists of 2 parts. The first 6 bytes are the vendor ID and the last 6 is the unique node ID. Vendor ID's are registered and by using registered vendor ID's it is possible to allocate unique MAC addresses.
+
+Protocol and Ports:
+In the previous section you learned how to use IP addresses to identify nodes. On these nodes, you will be typically running services, like a web server or an FTP server.
+To identify these services, port addresses are used. Every service has a specific port address, such as port 80 is for Hypertext transfer Protocol (HTTP) or port 22 for secure shell server. In network communication the sender and receiver are using the port addresses. So, there is a destination port address as well as a sorce port address involved in network communication.
+Because not all services are addressed in a similar way, a specific protocol is used between the IP address and the port address, such as Transfer Control Protocol (TCP) and User Datagram Protocol (UDP), or Internet Control Message Protocol (ICMP)
+Every Protocol has specific properties:
+    TCP- used when the network communication must be reliavle and delivery must be guarenteed
+    UDP- used when it must be fast and guarenteed delivery is not necessary.
+
+Managing Network address and Interfaces:
+As a Linux server admin, you need to manage network addresses and network interfaces. The network addresses can be assigned in 2 ways:
+**KEY TOPIC**
+    Fixed IP addresses- Useful for servers and other computers that always need to be available at the same IP address.
+    Dynamically assigned IP addresses: Useful for end users' devices and for instances in a cloud env. To Dynamically assign IP addresses, you usually use a Dynamic Host Configuration Protocol (DHCP)
+
+For a long time, network cards in Linux have had default names, such as eth0, eth1 and eth2. This naming is assigned based on the order of detection of the network card. So eth0 is the first network card that is detected, eth1 the second and eth2 the third.
+This works well in an env where a node has one or 2 network cards only if a node has multiple network cards that need to be dynamically added and removed, however, this approach does not work so well because it is very hard to identify which physical card is using which name.
+
+In RHEL 9 the default names for network cards are based on firmware, devices topology and device types. This leads to network card names that always consist of the following parts:
+    Ethernet interfaces begin with en, WLAN interfaces begin with wl and WWAN interfaces begin with ww.
+    The next part represents the type of adapter. An o is used for onboard, s is for a hotplug slot, p is for pci location. Admins can also use x to create a device name that is based on the MAC address of the network card.
+    Then follows a number, which is used to represent an index,ID,or port
+    If the fixed name cannot be determinedm traditional names such as eth0 are used.
+
+Based on this info, device names such as eno16777734 can be used, which = onboard Ethernet, with its unique index number.
+Apart from this default device naming, network cards can be named based on the BIOS device name. In this, names such as em1(embedded network card 1) or p4p1 (PCI slot4, port1)
+
+Validating Network Configuration:
+Before learning how ro set network information, you need to know how to verify current network information.
+We will learn how to check the following networking items:
+    IP address and subnet mask
+    Routing
+    Availability of ports and slots
+
+Validating Network Address Configuration:
+To veryify Configuration of the network address you need to use the ip utility. The IP util is a modern util that can consider advanced networking features that have been introduced in the past decades.
+With ip util you cna monitor may aspects of networking:
+    ip addr - to configure and monitor networking addresses.
+    ip route - to configure and monitor routing info.
+    ip link - to configure and mointor network link state
+**Warning**
+    In earlier linux and some unix-like os's, ifconfig was the util for validating network configs. DO NOT USE this util. You cannot manage or validate new concepts
+
+To show current network setting you can use the ip addr show or (ip a s), ip is a smart command and does not always need you to complete the option.
+The loopback interface is used for communication between processes. Some processes use the IP protocol for internal communications. for that reason you'll always find a loopback interface, and the ip address of the loopback interface is always set to:
+    127.0.0.1
+The important part of the ip a s command output:
+    Current status- The most important part of this line in the text state UP(or down), which shows that a network card is currently up or down.
+    MAC address config- THis is the unique Mac address that is set for every network card. Here you can see the Mac address and the corresponding broadcast address.
+    IPv4 configuration- This line shows the IP address that is currently set as, well as the subnet mask that is used. You can also seet the broadcast address that is used for this network card. Notice on some interfaces that you may find multiple IPv4 addresses.
+    IPv6 configuration- This line shows the current IPv6 address and it config. Even if you have not configured anything, every interface automatically gets an IPv6 address, which can be used for communication on the local network only.
+
+If you are only interested in the link state of the network interfcaces, you can use the ip link show command.
+This command repeats the link state info of ip addr show command. If you add the option -s you can also see current link statistics, which gives info about packets transmitted and received, as well as an overview of errors that may have occured during transmission.
+If the ip link show command shows the current link as state down, you can temporarily bring it up again using ip link set followed by dev device name and up
+    ip link set dev ens33 up
+
+Validating Routing:
+One important aspect of networking is routing. On every network that needs to communicate to nodes on other networks, routing is a requirement. Every network has at least a default router, that is set and you can see which router is used as the default router by using the command:
+    ip route show
+    You should always run a quick check to verify that your router is set correctly: the default router at all times must be on the same network as the local IP address that your network card is using.
+
+Validating the Availability of Ports and services:
+Network problems can be related to the local IP address and router settings but can also be related to network ports that are not available on your server or on a remote server. To verify availability of ports on your server, you can use the command:
+    netstat or the newer ss
+    use ss -lt to see all TCP ports listening on the local system.
+    When you run this you will see ports listening on both the IPv4 and IPv6 loopback addresses:
+        IPv4 loopback- 127.0.0.1
+        IPv6 loopback- ::1
+
+Managing Network Configuration with nmtui and nmcli:
+RHEL 9 is managed by the NetworkManager service. you can use the command systemctl status NetworkManager to verify its currenet status.
+When NetworkManager comes up, it reads the network card config scripts, which are in /etc/NetworkManager/system-connections and have a name that startas with the name of the network interface the config applies to.
+    Device- a device is a network iterface card
+    Connection- a connection is the configuration that is used on a device.
+In RHEL 9 you can create multiple configurations for a device. This makes sense on Mobile computers, for example, to differentiate between settings that are used to connect to the home network and settings that are used to connect to the corporate network.
+Switching between connections on devices is common on end-user computers but not so common on servers. To manage the network connections that you want to assign to devices, you use:
+    nmtui or nmcli
+***EXAM TIP***
+    The nmcli tool is cool and VERY powerful, but it is not the easiest tool available. To change network configs fast and efficiently, you should use the menu-driven tool nmtui.
+    NMTUI may not be as cool as nmcli but it allows you to do what you need to do in less than a minute.
+
+Required Permissions to Change Network Configuration:
+Obviously root user can make modifications to current networking. However, if an ordinary user is logged in to the local console, this user is able to make changes to the network config as well. As long as the user is using the system keyboard to enter either a graphical or text-based console,
+    these permissions are granted.
+The reason is that users are supposed to be able to connect their local system to a network. Notice that regular users who have used ssh to connect to a server are not allowed to change the network config. 
+To check current permissions use command:
+    niccli general permissions
+
+Configuring the Network with NMCLI
+ip and ip addr add command are useful for temporarily setting ip addresses on a network interface but if you want to set them to be persistant use nmcli or nmtui.
+a good starting point is showing all connections. This shows all active and inactive connections. You can easily see the difference because inactive connections are nnot currently assigned to a device.
+    nmcli con show
+    nmcli con show <name>
+This shows you all the properties of the connection. Notice that theis command shows many properties.
+To find out what exactly these settings are doing use command:
+    man 5 nm-settings
+You can also use nmcli to show an overview of currently configured devices and the status of these devices. Type, for instance, the nmcli dev status command to show a list of all devices, and nmcli dev show <devicename> to show settings for a specific device.
+
+*TIP*
+    Using nmcli might seem difficult. It is not, because it offers excellent command-line completion features. just make sure the bash-completion package has been installed. 
+    Try it out by typing nmcli, but don't press enter! instead press the Tab key twice you will see all available options nmcli expects in the moment.
+    Choose an option such as connection and press the Tab key twice. using this approach helps you compose long commands without the need to memorize anything!
+
+The main commands that you need for the RHCSA are as follows:
+    DHCP- nmcli con add con-name dhcp type ethernet ifname <the one your system shows> ipv4.method auto
+    static- nmcli con add con-name static type ifname <the one your system shows> autoconnect no type ethernet ip4 <IP address/gw> gw4 <gateway> ipv4.method manual
+        then to make that one state up or down use 
+        nmcli con up static
+
+Advanced nmcli commands: (Changing parameters with nmcli)
+To make sure the static connection does not auto connect.
+    nmcli con mod static connection.autoconnect no
+Add a DNS server.
+    nmcli con mod static ipv4.dns <DNS IP>
+Add a second DNS server.
+    nmcli con mod static +ipv4.dns <DNS IP>
+Change existing IP address
+    nmcli con mod static ipv4.addresses <IPaddress/gw>
+Add a second IP address
+    nmcli con mod static +ipv4.addresses <IPaddress/gw>
+After changing properties you need to activate them.
+    nmcli con up static
+
+TIP
+    if you are ever stuck please use the man pages that exist PLUS there is an examples man page:
+    man nmcli-examples
+
+Configuring the Network with nmtui:
+If you do not like the complex syntax of nmcli you will like nmtui. This is a txt user interface that allows you to create network connections easily.
+The nmtui interface consists of the 3 menu options:
+    Edit a Connection: Use this option to create new connections or edit existing connections.
+    Activate a connection: Use this to (re)activate a connection.
+    Set a System Hostname: Use this to set the host naem of your computer.
+
+The option to edit a connection offers almost all the features that you may ever need while working on network connections. It sure allows you to do anything you need to be doing on the exam. 
+You can use it to add any type of connection not just ethernet connections, but also advanced connection types such as network bridges and teamed network drivers are supported.
+When you select the option Edit a connection, you get access to a rich interface that allows you to edit most properties of network connections. After editing the ocnnection, you need to deactivate it and activate it again.
+    If you want a GUI (graphical user interface) you are in luck you can use the following:
+    nm-connection-editor
+
+Working on Network Configuration files:
+Every connection that you create is stored as a configuration file in the dir /etc/NetworkManager/system-connections. The name of the config files starts with the name of the connection, followrd by .nmconnection.
+In prior RHEL versions, network connections were stored in the /etc/sysconfig/network-scripts dir. If NetworkManager finds legacy connection scripts in this dir, they will be used, but NetworkManager connection scripts are no longer stroed by default at this location.
+
+Setting up Hostname and Name Resolution:
+To communicate with other hosts, hostnames are used. As an admin you must know how to set the hostname. You also need to make sure that hosts can contact one another based on hostnames by setting up hostname resolution,
+
+Hostnames:
+Because hostnames are used to access servers and the services they're offering, it is impotant to know how to set the system hostname. A hostname typically consists of different parts.
+Tehse are the name of the host and the:
+    Domain Name System(DNS) domain in which the host resides. 
+These 2 parts together make up the:
+    Fully Qualified Domain Name (FQDN)
+    Example: server1.example.com 
+It is good practice to always specify a FQDN and not just the hostname, because the FQDN provides a unique id on the internet.
+The different ways to change the hostname:
+    Use nmtui and select the option Change Hostname
+    Use hostnamectl set-hostname
+    Edit the contents of the config file /etc/hostname
+
+You can use the commands as follows:
+    hostnamectl set-hostname myhost.example.com
+    hostname status
+When using hostname status you see not only information about the hostname but also information about the linux kernel, virtualization type and much more.
+
+To set hostname resolution, you typically use DNS. Configuring a DNS server is not an RHCSA objective, but you need to know how to configure your server to use an existing DNS server for hostname resolution.
+Apart from DNS, you can configure hostname resolution in the /etc/hosts file.
+All hostname-IP address definitions as set in /etc/hosts will be applied before the hostane in DNS is used. This is configured as a default in the hosts line in /etc/nsswitch.conf which by default looks like:
+    hosts: files dns myhostname
+
+Setting up an /etc/hosts file is easy; just make sure that it contains at least 2 columns. 
+    The first column has the IP address of the specific host
+    The second column specifies the hostname.
+The hostname can be provided as a short name like server1 or as an FQDN. In an FQDN, the hostname as well as the complete DNS name are included, aas in server1.example.com
+If a host has more than one name, like a short name and a fully qualified DNS name, you can specify both of them in /etc/hosts. In that case, the second column must contain the FQDN, and the third column can contain the alias.
+
+DNS Name Resolution:
+Just using an /etc/hosts file is not enough for name resolution if you want to be able to communicate with other hosts on the internet. YOou should use DNS, too. To specify which DNS server should be used, set the DNS server using nmcli or nmtui.
+The NetworkManager configuration stores the DNS info in the config file for the netowrk connection, which is in the /etc/sysconfig/network-scripts, and from there pushes the config to the /etc/resolv.conf file, which is used for DNS name server resolving.
+DO NOT edit the /etc/resolv.conf directly, as it will be overwritten the next time you restart NetworkManager.
+It is recommended to always setup at least 2 DNS name servers to be contacted. If the first name server does not answer the second name server is contacted. To specify which DNS name servers you want to use, you have a few different options:
+    use nmtui to set DNS name servers.
+    Use a DHCP server that is configured to hand out the address of the DNS name server.
+    use nmcli con mod <connection-id> [+]ipv4.dns <ip-of-dns>
+
+Notice that if your computer is configured to get the network config from a DHCP server, the DNS server is also det via DHCP server. If you do not want this to happen use the following:
+    nmcli con mod <con-name> ipv4.ignore-auto-dns yes
